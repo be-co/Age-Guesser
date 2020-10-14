@@ -2,11 +2,15 @@ import 'dart:convert';
 
 import 'package:age_guesser/model/guess.dart';
 import 'package:age_guesser/model/guess_history.dart';
-import 'package:age_guesser/view/input_form.dart';
+import 'package:age_guesser/services/storage.dart';
+import 'package:age_guesser/view/history.dart';
+import 'package:age_guesser/view/home.dart';
+import 'package:age_guesser/view/settings.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
+  initializeSharedPrefs();
 }
 
 class MyApp extends StatelessWidget {
@@ -26,6 +30,11 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[200],
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.blue,
+          textTheme: ButtonTextTheme.primary,
+        ),
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.
@@ -58,32 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   int _currentIndex = 0;
   final List<Widget> _children = [
-    InputForm(),
-    InputForm(),
-    InputForm(),
-    /*SettingsList(
-        sections: [
-          SettingsSection(
-            title: 'Section',
-            tiles: [
-              SettingsTile(
-                title: 'Language',
-                subtitle: 'English',
-                leading: Icon(Icons.language),
-                onTap: () {},
-              ),
-              SettingsTile.switchTile(
-                title: 'Use fingerprint',
-                leading: Icon(Icons.fingerprint),
-                switchValue: false,
-                onToggle: (bool value) {
-
-                },
-              ),
-            ],
-          ),
-        ],
-      ), */
+    Home(),
+    History(),
+    Settings(),
   ];
 
   void _incrementCounter() {
@@ -127,10 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: Icon(Icons.refresh),
       ),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: onTabTapped,
+          onTap: _onTabTapped,
           currentIndex: _currentIndex,
           items: [
             BottomNavigationBarItem(
@@ -145,11 +131,12 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: new Icon(Icons.settings),
               title: new Text('Settings'),
             ),
-          ]), // This trailing comma makes auto-formatting nicer for build methods.
+          ]),
     );
   }
 
-  void onTabTapped(int index) {
+  // Change the current tab to the selected one
+  void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
     });

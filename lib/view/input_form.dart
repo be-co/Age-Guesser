@@ -1,30 +1,17 @@
-import 'package:age_guesser/model/webservice.dart';
 import 'package:flutter/material.dart';
 
-class InputForm extends StatefulWidget {
-  @override
-  InputFormState createState() {
-    return InputFormState();
-  }
-}
-
-class InputFormState extends State<InputForm> {
+class InputForm extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _textEditingController = TextEditingController();
+  final Function responseCallback;
 
-  // Dispose of controller when widget is disposed.
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    super.dispose();
-  }
+  InputForm({@required this.responseCallback});
 
   @override
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             /*Padding(
             padding: const EdgeInsets.symmetric(
@@ -45,12 +32,13 @@ class InputFormState extends State<InputForm> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: TextFormField(
+                textCapitalization: TextCapitalization.words,
                 controller: _textEditingController,
                 decoration: InputDecoration(
                   labelText: 'Enter Your Name',
                   labelStyle: TextStyle(
                       color: Colors.black87,
-                      fontSize: 17,
+                      fontSize: 18,
                       fontFamily: 'AvenirLight'),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.purple),
@@ -62,22 +50,31 @@ class InputFormState extends State<InputForm> {
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter your name';
+                  } else if (value.trim().split(" ").length != 1) {
+                    _textEditingController.clear();
+                    return 'Please only enter your first name (single word)';
+                  } else if (value.length >= 22) {
+                    return 'Your name is too long, sorry :(';
                   }
                   return null;
                 },
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-              child: RaisedButton(
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    fetchAge(_textEditingController.text);
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('Processing Data')));
-                  }
-                },
-                child: Text('Submit'),
+              padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: RaisedButton(
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      //fetchAge(_textEditingController.text);
+                      /*Scaffold.of(context).showSnackBar(
+                          SnackBar(content: Text('Processing Data'))); */
+                      responseCallback(_textEditingController.text.trim());
+                    }
+                  },
+                  child: Text('Submit'),
+                ),
               ),
             ),
           ],

@@ -1,8 +1,4 @@
-import 'dart:convert';
-
 import 'package:age_guesser/model/guess.dart';
-import 'package:age_guesser/model/webservice.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class GuessHistory {
   List<Guess> _guessHistory;
@@ -33,7 +29,7 @@ class GuessHistory {
     }
     
     //historyMap.map((elem) => jsonDecode(elem));
-    fetchAge('bernd');
+    //fetchAge('bernd');
 
     //print("runtime:" + historyMap.runtimeType.toString());
     //history = (List<Guess>) historyMap;
@@ -48,15 +44,4 @@ class GuessHistory {
       guessHistory : history,
     );
   }
-
-  void save() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('history', jsonEncode(_guessHistory));
-  }
-
-  void load() async {
-    final prefs = await SharedPreferences.getInstance();
-    String guessHistory = prefs.getString('history');
-  } 
-  
 }
