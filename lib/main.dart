@@ -50,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   PageController _pageController;
   String appTitle;
+  int counter = 0;
 
   _MyHomePageState(this.appTitle);
 
@@ -65,6 +66,15 @@ class _MyHomePageState extends State<MyHomePage> {
     _pageController = PageController();
     GuessHistory().loadFromStorage();
     initializeDateFormatting('de');
+    bool firstLaunch = getBoolSettings('firstLaunch');
+    if (firstLaunch == null) {
+      firstLaunch = true;
+    }
+    if (firstLaunch) {
+      Future.delayed(Duration.zero, () {
+        _showFirstLaunchDialog(context);
+      });
+    }
     print("init called main");
   }
 
@@ -78,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _refreshHistory() {
     setState(() {
+      counter++;
       // TODO
       /*Guess tmp = new Guess(name: 'Bernd', age: 33);
       Guess tmp1 = new Guess(name: 'Marc', age: 31);
@@ -142,20 +153,41 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
-      _pageController.animateToPage(index, duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+      _pageController.animateToPage(index,
+          duration: Duration(milliseconds: 200), curve: Curves.easeOut);
       switch (index) {
         case 0:
-          appTitle = "Age Guess - Home";
+          appTitle = "Home";
           break;
         case 1:
-          appTitle = "Age Guess - History";
+          appTitle = "History";
           break;
         case 2:
-          appTitle = "Age Guess - Settings";
+          appTitle = "Settings";
           break;
         default:
           appTitle = "Age Guess";
       }
     });
+  }
+
+  _showFirstLaunchDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Welcome to Age Guesser'),
+          content: Text('This is a simple app developed with Flutter. Simply enter your name in the text field and press the submit button to get an age guess.\n\nHave fun!'),
+          actions: [
+            FlatButton(
+                onPressed: () {
+                  //saveBoolSettings('firstLaunch', false);
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: Text('Dismiss'))
+          ],
+        );
+      },
+    );
   }
 }

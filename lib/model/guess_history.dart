@@ -31,12 +31,20 @@ class GuessHistory {
 
   void loadFromStorage() {
     String historyJson = loadHistory();
+    if (historyJson == null) {
+      print("empty guess history json");
+      _guessHistory = [];
+    }
     fromJson(jsonDecode(historyJson));
   }
 
   void saveToStorage() {
     String historyJson = jsonEncode(_instance);
     saveHistory(historyJson);
+  }
+
+  void removeAllHistoryEntries() {
+    _guessHistory.clear();
   }
 
   Map<String, dynamic> toJson() => {
@@ -49,7 +57,6 @@ class GuessHistory {
     for (int i = 0; historyMap.length > i; i++) {
       Guess tmp = Guess.fromJson(historyMap.elementAt(i));
       historyList.add(tmp);
-      //print(tmp.getName());
     }
     _guessHistory = historyList;
   }

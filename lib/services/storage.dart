@@ -11,6 +11,16 @@ Future initializeSharedPrefs() async {
   }
 }
 
+void saveBoolSettings(String key, bool value) {
+  _prefs.setBool(key, value);
+}
+
+bool getBoolSettings(String key) {
+  bool value = _prefs.getBool(key);
+  print(value);
+  return value;
+}
+
 void saveStringSettings(String key, String value) {
   _prefs.setString(key, value);
 }

@@ -63,8 +63,6 @@ class Guess {
     final diffHours = now.difference(getTimeStamp()).inHours;
     final diffMinutes = now.difference(getTimeStamp()).inMinutes;
 
-    print(diffMinutes.toString());
-
     if (diffHours == 0) {
       if (diffMinutes <= 1) {
         return "<1 minute ago";

@@ -1,3 +1,4 @@
+import 'package:age_guesser/services/storage.dart';
 import 'package:age_guesser/view/history_details.dart';
 import 'package:flutter/material.dart';
 
@@ -13,21 +14,17 @@ class History extends StatefulWidget {
 }
 
 class _HistoryState extends State<History> {
-  /* final List<Guess> history = <Guess>[
-    Guess(name: 'Bernd', age: 32),
-    Guess(name: 'Martin', age: 30),
-    Guess(name: 'Lars', age: 24)
-  ]; */
   final TextStyle _biggerFont = TextStyle(fontSize: 18.0);
-
   GuessHistory history;
   List<Guess> historyList;
+  bool _historyStorageEnabled;
 
   @override
   void initState() {
     print("init called");
     this.history = GuessHistory();
     this.historyList = history.getGuessHistory().reversed.toList();
+    _historyStorageEnabled = getBoolSettings('history_storage');
     super.initState();
   }
 
@@ -106,6 +103,10 @@ class _HistoryState extends State<History> {
                     removeCallback: removeGuess, guess: guess)));
       },
     );
+  }
+
+  void refreshView() {
+    setState(() {});
   }
 
   void removeGuess(Guess guess) {
