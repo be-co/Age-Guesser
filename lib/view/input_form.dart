@@ -36,10 +36,6 @@ class InputForm extends StatelessWidget {
                 controller: _textEditingController,
                 decoration: InputDecoration(
                   labelText: 'Enter Your Name',
-                  labelStyle: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 18,
-                      fontFamily: 'AvenirLight'),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.purple),
                   ),

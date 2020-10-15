@@ -57,4 +57,24 @@ class Guess {
     'age' : _age,
     'ts' : _timestamp.toIso8601String(),
   };
+
+  String getTimePassed() {
+    DateTime now = DateTime.now();
+    final diffHours = now.difference(getTimeStamp()).inHours;
+    final diffMinutes = now.difference(getTimeStamp()).inMinutes;
+
+    print(diffMinutes.toString());
+
+    if (diffHours == 0) {
+      if (diffMinutes <= 1) {
+        return "<1 minute ago";
+      }
+      return diffMinutes.toString() + " minutes ago";
+    } else {
+      if (diffHours == 1) {
+        return "1 hour ago";
+      }
+      return diffHours.toString() + " hours ago";
+    }
+  }
 }

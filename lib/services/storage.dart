@@ -1,11 +1,8 @@
-import 'dart:convert';
-
-import 'package:age_guesser/model/guess_history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences _prefs;
 
-void initializeSharedPrefs() async {
+Future initializeSharedPrefs() async {
   if (_prefs == null) {
     _prefs = await SharedPreferences.getInstance();
     print("SharedPrefs initialized");
@@ -32,18 +29,16 @@ int getIntSettings(String key) {
   return value;
 }
 
-void saveHistory(GuessHistory history) {
-  _prefs.setString('history', jsonEncode(history));
+void saveHistory(String historyJson) {
+  _prefs.setString('history', historyJson);
 }
 
-GuessHistory loadHistory() {
+String loadHistory() {
   String guessHistoryString = _prefs.getString('history');
   if (guessHistoryString == null || guessHistoryString == "null") {
     print("shared prefs not existing");
-    return GuessHistory();
+    return null;
   } else {
-    //print(guessHistoryString);
-    GuessHistory guessHistory = GuessHistory.fromJson(jsonDecode(guessHistoryString));
-    return guessHistory;
+    return guessHistoryString;
   }
 }

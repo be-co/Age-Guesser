@@ -1,47 +1,56 @@
+import 'dart:convert';
+
 import 'package:age_guesser/model/guess.dart';
+import 'package:age_guesser/services/storage.dart';
 
 class GuessHistory {
+  static final GuessHistory _instance = GuessHistory._internal();
+
   List<Guess> _guessHistory;
 
-  GuessHistory({List<Guess> guessHistory}) {
-    this._guessHistory = guessHistory ?? [];
+  GuessHistory._internal() {
+    _guessHistory = [];
+    print("Guess History Initialized");
   }
 
-  void addGuess(Guess guess) {
-    this._guessHistory.add(guess);
+  factory GuessHistory() {
+    return _instance;
   }
 
   List<Guess> getGuessHistory() {
     return _guessHistory;
   }
 
+  void addGuess(Guess guess) {
+    _guessHistory.add(guess);
+  }
+
+  void removeGuess(Guess guess) {
+    _guessHistory.remove(guess);
+  }
+
+  void loadFromStorage() {
+    String historyJson = loadHistory();
+    fromJson(jsonDecode(historyJson));
+  }
+
+  void saveToStorage() {
+    String historyJson = jsonEncode(_instance);
+    saveHistory(historyJson);
+  }
+
   Map<String, dynamic> toJson() => {
     'history' : _guessHistory, 
   };
 
-  factory GuessHistory.fromJson(Map<String, dynamic> json) {
+  fromJson(Map<String, dynamic> json) {
     List<dynamic> historyMap = json['history'];
-    List<Guess> history = [];
+    List<Guess> historyList = [];
     for (int i = 0; historyMap.length > i; i++) {
       Guess tmp = Guess.fromJson(historyMap.elementAt(i));
-      history.add(tmp);
-      print(tmp.getName());
+      historyList.add(tmp);
+      //print(tmp.getName());
     }
-    
-    //historyMap.map((elem) => jsonDecode(elem));
-    //fetchAge('bernd');
-
-    //print("runtime:" + historyMap.runtimeType.toString());
-    //history = (List<Guess>) historyMap;
-    //print('fromJSON1');
-    //print(historyMap is List<Guess>);
-    print(json);
-    //print(history.length);
-    /*return GuessHistory(
-      guessHistory : json['history'],
-    ); */
-    return GuessHistory(
-      guessHistory : history,
-    );
+    _guessHistory = historyList;
   }
 }

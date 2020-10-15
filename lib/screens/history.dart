@@ -1,9 +1,9 @@
-import 'package:age_guesser/services/storage.dart';
 import 'package:age_guesser/view/history_details.dart';
 import 'package:flutter/material.dart';
 
 import 'package:age_guesser/model/guess.dart';
 import 'package:age_guesser/model/guess_history.dart';
+
 
 class History extends StatefulWidget {
   History({Key key}) : super(key: key);
@@ -13,7 +13,7 @@ class History extends StatefulWidget {
 }
 
 class _HistoryState extends State<History> {
- /* final List<Guess> history = <Guess>[
+  /* final List<Guess> history = <Guess>[
     Guess(name: 'Bernd', age: 32),
     Guess(name: 'Martin', age: 30),
     Guess(name: 'Lars', age: 24)
@@ -25,15 +25,15 @@ class _HistoryState extends State<History> {
 
   @override
   void initState() {
-    GuessHistory history = loadHistory();
-    historyList = history.getGuessHistory();
-    this.history = history;
+    print("init called");
+    this.history = GuessHistory();
+    this.historyList = history.getGuessHistory().reversed.toList();
     super.initState();
   }
 
   @override
   void dispose() {
-    saveHistory(history);
+    GuessHistory().saveToStorage();
     super.dispose();
   }
 
@@ -41,7 +41,9 @@ class _HistoryState extends State<History> {
   Widget build(BuildContext context) {
     return Container(
       // When there are no more entries left in the history show info for the user
-      child: historyList.length > 0 ? buildHistoryList() : Text("No history entries available."),
+      child: historyList.length > 0
+          ? buildHistoryList()
+          : Text("No history entries available."),
     );
   }
 
@@ -69,23 +71,17 @@ class _HistoryState extends State<History> {
           ),
           key: Key(historyList[index].getTimeStamp().toString()),
           child: Container(
-            //height: 70,
-            // color: Colors.white,
             child: _buildRow(historyList[index], index),
           ),
           onDismissed: (direction) {
-            Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text("Age guess for the name ${historyList[index].getName()} removed")));
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    "Age guess for the name ${historyList[index].getName()} removed")));
             setState(() {
               historyList.removeAt(index);
             });
           },
         );
-        /*if (i.isOdd) return Divider();
-
-        final index = i ~/ 2;
-        if (index >= history.length) {} */
-        //return _buildRow(history[index]);
       },
     );
   }
@@ -98,22 +94,26 @@ class _HistoryState extends State<History> {
         children: [
           Text("Age: " + guess.getAge().toString()),
           Padding(padding: EdgeInsets.symmetric(horizontal: 10.0)),
-          Text("<1 min ago"),
+          Text(guess.getTimePassed()),
         ],
       ),
       trailing: Icon(Icons.keyboard_arrow_right),
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HistoryDetails(removeCallback: removeGuess, index: index)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HistoryDetails(
+                    removeCallback: removeGuess, guess: guess)));
       },
     );
   }
 
-  void removeGuess(int index) {
+  void removeGuess(Guess guess) {
     setState(() {
-      historyList.removeAt(index);
-      Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text("Age guess removed")));
-      //print("removed + size: " + historyList.length.toString());
+      history.removeGuess(guess);
+      historyList.remove(guess);
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text("Age guess for " + guess.getName() + " removed")));
     });
   }
 }

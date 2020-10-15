@@ -1,3 +1,4 @@
+import 'package:age_guesser/model/guess_history.dart';
 import 'package:age_guesser/services/webservice.dart';
 import 'package:age_guesser/view/response_error.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,10 @@ import 'package:age_guesser/model/guess.dart';
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
 
+  final GuessHistory history = new GuessHistory();
+  
   @override
-  _HomeState createState() => _HomeState();
+  _HomeState createState() => _HomeState(history.getGuessHistory());
 }
 
 class _HomeState extends State<Home> {
@@ -19,6 +22,9 @@ class _HomeState extends State<Home> {
   bool _hasResult = false;
   bool _processing = false;
   bool _responseError = false;
+  List<Guess> _history;
+
+  _HomeState(this._history);
 
   void getAge(String name) {
     setState(() {
@@ -35,6 +41,7 @@ class _HomeState extends State<Home> {
         _responseError = true;
         _hasResult = false;
       } else {
+        _history.add(response);
         _responseError = false;
         _hasResult = true;
         _responseAge = guess.getAge();
