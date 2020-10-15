@@ -1,17 +1,20 @@
-import 'package:age_guesser/model/guess_history.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:age_guesser/services/storage.dart';
-import 'package:age_guesser/screens/history.dart';
-import 'package:age_guesser/screens/home.dart';
-import 'package:age_guesser/screens/settings.dart';
-
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:age_guesser/view_model/history_list_view_model.dart';
+import 'package:age_guesser/view/screens/history.dart';
+import 'package:age_guesser/view/screens/home.dart';
+import 'package:age_guesser/view/screens/settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeSharedPrefs();
-  runApp(MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+      create: (context) => HistoryListViewModel(),
+    ),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -64,9 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    GuessHistory().loadFromStorage();
-    initializeDateFormatting('de');
-    bool firstLaunch = getBoolSettings('firstLaunch');
+    //initializeDateFormatting('de');
+    bool firstLaunch = getBoolSettings('first_launch');
     if (firstLaunch == null) {
       firstLaunch = true;
     }
@@ -75,34 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {
         _showFirstLaunchDialog(context);
       });
     }
-    print("init called main");
   }
 
   @override
   void dispose() {
-    GuessHistory().saveToStorage();
     _pageController.dispose();
     super.dispose();
-    print("dispose called main");
-  }
-
-  void _refreshHistory() {
-    setState(() {
-      counter++;
-      // TODO
-      /*Guess tmp = new Guess(name: 'Bernd', age: 33);
-      Guess tmp1 = new Guess(name: 'Marc', age: 31);
-      GuessHistory history = new GuessHistory();
-      history.addGuess(tmp);
-      history.addGuess(tmp1);
-      String json = jsonEncode(history);
-      print(json);
-      print(tmp.getAge());
-      Map historyMap = jsonDecode(json);
-      GuessHistory tmp123 = GuessHistory.fromJson(historyMap);
-      List<dynamic> tmpHistory = historyMap['history'];
-      tmpHistory.map((elem) => jsonDecode(elem)); */
-    });
   }
 
   @override
@@ -124,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: _currentIndex == 1
           ? FloatingActionButton(
-              onPressed: _refreshHistory,
+              onPressed: _refreshHistoryListView,
               tooltip: 'Refresh',
               child: Icon(Icons.refresh),
             )
@@ -171,17 +151,22 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  _showFirstLaunchDialog(BuildContext context) {
+  void _refreshHistoryListView() {
+    Provider.of<HistoryListViewModel>(context, listen: false).refresh();
+  }
+
+  void _showFirstLaunchDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Welcome to Age Guesser'),
-          content: Text('This is a simple app developed with Flutter. Simply enter your name in the text field and press the submit button to get an age guess.\n\nHave fun!'),
+          content: Text(
+              'This is a simple app developed with Flutter. Simply enter your name in the text field and press the submit button to get an age guess.\n\nHave fun!'),
           actions: [
             FlatButton(
                 onPressed: () {
-                  //saveBoolSettings('firstLaunch', false);
+                  saveBoolSettings('first_launch', false);
                   Navigator.of(context, rootNavigator: true).pop();
                 },
                 child: Text('Dismiss'))

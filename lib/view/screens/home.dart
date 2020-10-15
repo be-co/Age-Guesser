@@ -1,20 +1,18 @@
-import 'package:age_guesser/model/guess_history.dart';
-import 'package:age_guesser/services/storage.dart';
-import 'package:age_guesser/services/webservice.dart';
-import 'package:age_guesser/view/response_error.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:age_guesser/view/response.dart';
-import 'package:age_guesser/view/input_form.dart';
+import 'package:age_guesser/services/webservice.dart';
+import 'package:age_guesser/view/home/response_error.dart';
+import 'package:age_guesser/view_model/history_list_view_model.dart';
+import 'package:age_guesser/view/home/response.dart';
+import 'package:age_guesser/view/home/input_form.dart';
 import 'package:age_guesser/model/guess.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
 
-  final GuessHistory history = new GuessHistory();
-
   @override
-  _HomeState createState() => _HomeState(history.getGuessHistory());
+  _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
@@ -23,15 +21,12 @@ class _HomeState extends State<Home> {
   bool _hasResult = false;
   bool _processing = false;
   bool _responseError = false;
-  List<Guess> _history;
-  bool _historyStorageEnabled;
-
-  _HomeState(this._history);
 
   @override
   void initState() {
     super.initState();
-    _historyStorageEnabled = getBoolSettings('history_storage');
+    //_historyStorageEnabled = getBoolSettings('history_storage');
+    //print('storage enabled:' + _historyStorageEnabled.toString());
     print('init called home');
   }
 
@@ -42,24 +37,20 @@ class _HomeState extends State<Home> {
     fetchAge(name, setAge);
   }
 
-  void setAge(Guess response) {
-    Guess guess = response;
+  void setAge(Guess guess) {
     setState(() {
       _processing = false;
       if (guess.getAge() == null) {
         _responseError = true;
         _hasResult = false;
       } else {
-        if (_historyStorageEnabled) {
-          _history.add(response);
-        }
+        Provider.of<HistoryListViewModel>(context, listen: false).add(guess);
         _responseError = false;
         _hasResult = true;
         _responseAge = guess.getAge();
         _responseName = guess.getName();
       }
     });
-    //print("Age $_responseAge");
   }
 
   @override

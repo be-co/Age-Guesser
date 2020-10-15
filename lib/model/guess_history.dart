@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:age_guesser/model/guess.dart';
 import 'package:age_guesser/services/storage.dart';
 
+// Singleton class that holds a list of Guess objects
+// Used to represent the history of guesses performed by the user (as long as enabled via app settings)
 class GuessHistory {
   static final GuessHistory _instance = GuessHistory._internal();
 

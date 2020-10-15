@@ -1,6 +1,8 @@
-import 'package:age_guesser/model/guess_history.dart';
-import 'package:age_guesser/services/storage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:age_guesser/services/storage.dart';
+import 'package:age_guesser/view_model/history_list_view_model.dart';
 
 class Settings extends StatefulWidget {
   Settings({Key key}) : super(key: key);
@@ -28,7 +30,7 @@ class _SettingsState extends State<Settings> {
   void dispose() {
     // Save settings
     saveBoolSettings('history_storage', _historyStorageEnabled);
-    //print('saving settings');
+    print("settings: saving " + _historyStorageEnabled.toString());
     super.dispose();
   }
 
@@ -58,7 +60,7 @@ class _SettingsState extends State<Settings> {
   }
 
   void deleteGuessHistory() {
-    GuessHistory().removeAllHistoryEntries();
+    Provider.of<HistoryListViewModel>(context, listen: false).removeAll();
   }
 
   void setHistoryStorageText(bool enabled) {
