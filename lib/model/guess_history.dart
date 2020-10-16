@@ -42,10 +42,10 @@ class GuessHistory {
       //print("empty guess history json");
       /// Create empty list (first app launch)
       _guessHistory = [];
+    } else {
+      /// Parse String response into an actual object
+      fromJson(jsonDecode(historyJson));
     }
-
-    /// Parse String response into an actual object
-    fromJson(jsonDecode(historyJson));
   }
 
   /// Save the history list to shared preferences
