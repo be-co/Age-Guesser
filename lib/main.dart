@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:age_guesser/services/storage.dart';
-import 'package:age_guesser/view_model/history_list_view_model.dart';
+import 'package:age_guesser/view_model/history_list.dart';
 import 'package:age_guesser/view/screens/history.dart';
 import 'package:age_guesser/view/screens/home.dart';
 import 'package:age_guesser/view/screens/settings.dart';
 
 void main() async {
+  /// We need to wait for a binding to be established
+  /// otherwise the following statement (initializeSharedPrefs()) will produce an error
   WidgetsFlutterBinding.ensureInitialized();
   await initializeSharedPrefs();
+
+  /// Initialize history list provider and start app
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => HistoryListViewModel(),
@@ -31,6 +35,8 @@ class MyApp extends StatelessWidget {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+
+      /// Dark mode theme
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.green,
@@ -50,13 +56,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  /// Variables required for switching between tabs
   int _currentIndex = 0;
+
+  /// The page controller is necessary to show an animation when switchting between tabs
   PageController _pageController;
+
+  /// The title in the app bar will be changed depending on the currently selected tab
   String appTitle;
-  int counter = 0;
 
   _MyHomePageState(this.appTitle);
 
+  /// The list of our three main screens
   final List<Widget> _tabs = [
     Home(),
     History(),
@@ -68,10 +79,16 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _pageController = PageController();
     //initializeDateFormatting('de');
+    /// When the app is launched for the first time we want to show a small popup
     bool firstLaunch = getBoolSettings('first_launch');
+
+    /// TODO share prefs should ideally be initialized once when the app is first stared
+    /// To prevent an error when receiving a null value from shared prefs
     if (firstLaunch == null) {
       firstLaunch = true;
     }
+
+    /// Show popup when it's the first launch of the app
     if (firstLaunch) {
       Future.delayed(Duration.zero, () {
         _showFirstLaunchDialog(context);
@@ -102,6 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
           children: _tabs,
         ),
       ),
+
+      /// Only show the floating action button on the history tab
+      /// Allows to refresh the list of made guesses
       floatingActionButton: _currentIndex == 1
           ? FloatingActionButton(
               onPressed: _refreshHistoryListView,
@@ -129,12 +149,16 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Change the current tab to the selected one
+  /// Change the current tab to the one selected by the user
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
+
+      /// Show animation when changing between tabs
       _pageController.animateToPage(index,
           duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+
+      /// Change app bar title depending on which tab is currently selected
       switch (index) {
         case 0:
           appTitle = "Home";
@@ -151,10 +175,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Function that is called by the floating action button
   void _refreshHistoryListView() {
+    /// Call the refresh function of our history list provider
     Provider.of<HistoryListViewModel>(context, listen: false).refresh();
   }
 
+  /// Create the popup that is shown to users on their first app launch
   void _showFirstLaunchDialog(BuildContext context) {
     showDialog(
       context: context,

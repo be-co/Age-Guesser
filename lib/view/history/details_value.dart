@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Widget that displays a simple two row key/value pair
 class DetailsValue extends StatelessWidget {
   final String _title;
   final String _value;

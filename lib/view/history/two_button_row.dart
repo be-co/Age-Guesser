@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Widget that creates a row with two button
 class TwoButtonRow extends StatelessWidget {
   final String _positiveButtonText;
   final String _negativeButtonText;
@@ -22,19 +23,30 @@ class TwoButtonRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+
+        /// Positive Button
         Expanded(
           child: RaisedButton(
+            /// Name
             child: Text(_positiveButtonText),
+
+            /// Callback when pressed
             onPressed: () {
               _positiveButtonCallback();
             },
           ),
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: 2.0)),
+
+        /// Negative Button
         Expanded(
           child: RaisedButton(
             color: Colors.red,
+
+            /// Name
             child: Text(_negativeButtonText),
+
+            /// Callback when pressed
             onPressed: () {
               _negativeButtonCallback();
             },

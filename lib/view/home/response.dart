@@ -1,5 +1,7 @@
+import 'package:age_guesser/view/history/details_value.dart';
 import 'package:flutter/material.dart';
 
+/// Widget that shows the age guess response in a card form
 class Response extends StatelessWidget {
   final int age;
   final String name;
@@ -32,29 +34,11 @@ class Response extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10.0),
         child: Column(
           children: [
-            Text(
-              "Name:",
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18.0, color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-            Padding(padding: const EdgeInsets.symmetric(vertical: 4.0)),
-            Text(
-              "$name",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0, color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-            Padding(padding: const EdgeInsets.symmetric(vertical: 10.0)),
-            Text(
-              "Your guessed age is:",
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18.0, color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-            Padding(padding: const EdgeInsets.symmetric(vertical: 4.0)),
-            Text(
-              "$age",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0, color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
+            DetailsValue(title: 'Name', value: name, usePadding: true),
+            DetailsValue(
+                title: 'Your guessed age is:',
+                value: age.toString(),
+                usePadding: false)
           ],
         ),
       ),

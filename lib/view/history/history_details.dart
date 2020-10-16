@@ -5,13 +5,15 @@ import 'package:provider/provider.dart';
 import 'package:age_guesser/model/guess.dart';
 import 'package:age_guesser/view/history/details_value.dart';
 import 'package:age_guesser/view/history/two_button_row.dart';
-import 'package:age_guesser/view_model/history_list_view_model.dart';
+import 'package:age_guesser/view_model/history_list.dart';
 
+/// Widget that shows the details of an guess selected by the user in the history list
 class HistoryDetails extends StatelessWidget {
   final Guess guess;
   final BuildContext context;
+  final Function notificationCallback;
 
-  HistoryDetails({@required this.guess, @required this.context});
+  HistoryDetails({@required this.guess, @required this.context, @required this.notificationCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class HistoryDetails extends StatelessWidget {
                       usePadding: true),
                   DetailsValue(
                       title: 'Date of Guess: ',
+                      /// Format timestamp into a user readable format
                       value: new DateFormat.yMMMd()
                           .add_jm()
                           .format(guess.getTimeStamp()),
@@ -77,12 +80,15 @@ class HistoryDetails extends StatelessWidget {
     );
   }
 
+  /// Return to the previous screen
   void goBack() {
     Navigator.pop(context);
   }
 
+  /// Removes a guess from the underlying history list, shows a notification and returns to the previous screen
   void removeEntry() {
     Provider.of<HistoryListViewModel>(context, listen: false).remove(guess);
-    Navigator.pop(context);
+    notificationCallback(guess.getName());
+    goBack();
   }
 }

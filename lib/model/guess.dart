@@ -6,11 +6,11 @@ class Guess {
   final int _age;
   final DateTime _timestamp;
 
-  Guess({@required String name, int age, DateTime timestamp}) : 
-    this._name = name, 
-    this._age = age,
-    // When created by receiving a guess from the API use a current timestamp, otherwise use the passed one  
-    this._timestamp = timestamp ?? new DateTime.now();
+  Guess({@required String name, int age, DateTime timestamp})
+      : this._name = name,
+        this._age = age,
+        // When created by receiving a guess from the API use a current timestamp, otherwise use the passed one
+        this._timestamp = timestamp ?? new DateTime.now();
 
   String getName() {
     return this._name;
@@ -34,21 +34,22 @@ class Guess {
     );
   }
 
-   /// Same as the Guess.fromJson method but omitting the timestamp, used to handle responses from the web API
+  /// Same as the Guess.fromJson method but omitting the timestamp, used to handle responses from the web API
   factory Guess.fromJsonResponse(Map<String, dynamic> json) {
     return Guess(
-        name: json['name'] as String,
-        age: json['age'] as int,
-      );
+      name: json['name'] as String,
+      age: json['age'] as int,
+    );
   }
 
   /// Method that creates a JSON String of the guess objects, used by jsonEncode()
   Map<String, dynamic> toJson() => {
-    'name' : _name,
-    'age' : _age,
-    /// We have to convert the complex object DateTime to a String to allow the creation of a JSON String
-    'ts' : _timestamp.toIso8601String(),
-  };
+        'name': _name,
+        'age': _age,
+
+        /// We have to convert the complex object DateTime to a String to allow the creation of a JSON String
+        'ts': _timestamp.toIso8601String(),
+      };
 
   /// Returns a string representation of the time that has passed since the guess object's timestamp has been created
   /// In Minutes when <60 Minutes, in hours when <24 hours, otherwise in days
